@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Text Game</title>
+  </head>
+  <style>
+    /*隐藏*/
+    #inputname {
+        display: none;
+        }
+    
+        /*输入名字*/
+    .name-input{
+      position: fixed;
+      bottom: 50%;
+      left: 50%
+    }
+    .nameinput_lable{
+      position: fixed;
+      bottom: 50%;
+      left: 40%
+    }
+    .nameconfirm_button{
+      position: fixed;
+      bottom: 40%;
+      left: 58%
+    }
+
+    /*读取按钮*/
+    .start-game{
+      position: fixed;
+      top: 50%;
+      right: 45%
+    }
+    .save-button{
+      position: fixed;
+      top: 10%;
+      right: 15%
+    }
+    .load-button{
+      position: fixed;
+      top: 10%;
+      right: 10%
+    }
+
+    /*文本*/
+    .game_text{
+      font-size: 25px;
+      position: fixed;
+      bottom: 50%;
+      left: 50%
+    }
+  </style>
+  <body>
+    <!--容器-->
+    <div id="game"></div>
+    <div id="inputname">
+      <label for="name-input" class="nameinput_lable">请输入你的名字:</label>
+      <input type="text" id="name-input" class="name-input">
+      <button id="name-confirm" class="nameconfirm_button">确定</button>
+    </div>
+    <div id="gameText"></div>
+    
+    <!--按钮-->
+    <button id="start_game" class="start-game" onclick="startButton">开始旅程</button>
+    <button id="save-button" class="save-button">保存</button>
+    <button id="load-button" class="load-button">读取</button>
+    
+    
+    <script>
+      const gameContainer = document.getElementById("game");
+      const inputNameContainer = document.getElementById("inputname");
+     
+      const nameInput = document.getElementById("name-input");
+      
+      const nameConfirmButton = document.getElementById("name-confirm");
+      const startButton = document.getElementById("start-game");
+      const saveButton = document.getElementById("save-button");
+      const loadButton = document.getElementById("load-button");
+
+      //存档
+      let playerName = "";
+      let gameState = {
+        text: "",
+      };
+
+      //开始旅程按钮
+      const start_game = document.getElementById("start_game");
+      const inputNameElement = document.getElementById("inputname");
+
+      start_game.addEventListener("click", function() {
+      inputNameElement.style.display = "block";
+      start_game.style.display = "none";
+      });
+
+      
+      //开始游戏
+      function startGame() {
+        gameState.text = `<span class="game_text">${playerName}，你好</span>`;
+        render();
+      }
+
+      function render() {
+        const gameTextElement = document.getElementById("gameText");
+        gameTextElement.innerHTML = gameState.text;
+      }
+
+      //输入名字
+      nameConfirmButton.addEventListener("click", function () {
+        playerName = nameInput.value;
+        inputNameContainer.style.display = "none";
+        startGame();
+      });
+
+      //保存
+      saveButton.addEventListener("click", function () {
+        localStorage.setItem("gameState", JSON.stringify(gameState));
+        console.log("游戏已保存");
+      });
+
+      loadButton.addEventListener("click", function () {
+        const savedState = localStorage.getItem("gameState");
+        inputNameContainer.style.display = "none";
+        if (savedState) {
+          gameState = JSON.parse(savedState);
+          console.log("游戏已读取");
+          render();
+        } else {
+          console.log("没有保存的游戏状态");
+        }
+      });
+    </script>
+  </body>
+</html>
