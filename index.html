@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Game</title>
+    <style>
+       body {
+       height: 100vh;/*主体高度*/
+       }
+       #game {
+        display: none;
+        }
+       #inputname {
+        display: none;
+        }
+      
+       
+        /*按钮样式*/
+        .start_game {
+			  font-size: 30px;
+			  padding: 20px 30px;
+			  background-color: rgb(111, 103, 196);
+			  color: white;
+			  border: none;
+			  border-radius: 5px;
+			  cursor: pointer;
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+       }
+
+        .save_ {
+        padding: 10px 20px; 
+        font-size: 20px;
+        position: fixed; 
+        top: 5%;
+        right: 15%
+        }
+        .load_ {
+        position: fixed; 
+        padding: 10px 20px; 
+        font-size: 20px;
+        position: fixed; 
+        top: 5%;
+        right: 5%
+        }
+
+        .prev-button {
+        position: fixed; 
+        padding: 10px 20px; 
+        font-size: 20px;
+        position: fixed; 
+        bottom: 20px;
+        right: 5%
+        }
+        .next-button {
+        position: fixed; 
+        padding: 10px 20px; 
+        font-size: 20px;
+        position: fixed; 
+        bottom: 20px;
+        right: 15%
+        }
+
+       
+    </style>
+  </head>
+  <body>
+    
+    <!-- 按钮 -->
+    <button class="start_game" id="startgame" onclick="startgame()" >开始游戏</button>
+    <button class="save_"  onclick="save()" >保存</button>
+    <button class="load_"  id="load" onclick="load()" >读取</button>
+
+    
+    <div id="inputname">
+      <label for="name-input">你的名字是:</label>
+      <input type="text" id="name-input">
+      <button id="name-confirm">确认</button>
+    </div>
+  
+  <!-- DIV game 显示内容-->
+  <div id="game">
+    
+    <button  class="prev-button" id="prev-button">上一页</button>
+    <button  class="next-button" id="next-button">下一页</button>
+
+  </div>
+
+  <!-- 显示文字 -->
+  <div id="text-box">
+    
+  </div>
+
+ 
+  
+  
+  
+  
+  <script>
+    //获取div game
+    var game = document.getElementById("game");
+
+    //开始游戏按钮
+    function startgame() {
+    document.getElementById("inputname").style.display = "block";
+    }
+
+    const start_game = document.getElementById("startgame");
+    
+    start_game.addEventListener("click", function() {
+    start_game.style.display = "none";
+    });
+
+    
+    
+     //输入名字
+     const nameInput = document.getElementById("name-input");
+    const namecofirmButton = document.getElementById("name-confirm");
+
+    namecofirmButton.addEventListener("click", function() {
+    const playerName = nameInput.value;
+    localStorage.setItem("playerName", playerName);
+    document.getElementById("game").style.display = "block"
+    document.getElementById("inputname").style.display = "none"
+    });
+    
+    
+    
+    
+    //文本
+    const playerName = localStorage.getItem("playerName");
+    var text = `${playerName}\n\n\
+               这是第一段文本。\n\n\
+               这是第二段文本。\n\n\
+               这是第三段文本。\n\n\
+               这是第四段文本。\n\n\
+               这是第五段文本。`;
+               
+    var textArray = text.split("\n\n");
+
+    var style = document.createElement("style");
+    style.innerHTML = "body { \
+                       font-family: Arial, sans-serif; \
+                       font-size: 60px; \
+                       text-align: center;\
+                       display: flex;\
+                       justify-content: center;\
+                       align-items: center;\
+                       }"
+    //渲染文本                   
+    document.head.appendChild(style);
+    textArray.forEach(function(paragraph) {
+    var p = document.createElement("p");
+    document.body.appendChild(p);
+    });
+
+    //翻页功能
+    var currentIndex; // 声明全局变量 currentIndex
+    var currentIndex = -1;
+    var textBox = document.getElementById("text-box");
+    var prevButton = document.getElementById("prev-button");
+    var nextButton = document.getElementById("next-button");
+
+    function showText(index) {
+    textBox.textContent = textArray[index];
+    }
+
+    function showNextText() {
+    if (currentIndex < textArray.length - 1) {
+    currentIndex++;
+    showText(currentIndex);
+      }
+    }
+
+    function showPrevText() {
+    if (currentIndex > 0) {
+    currentIndex--;
+    showText(currentIndex);
+      }
+    }
+
+    prevButton.addEventListener("click", showPrevText);
+    nextButton.addEventListener("click", showNextText);
+
+    showText(currentIndex);
+      
+
+    //存档系统
+    function save() {
+    localStorage.setItem("currentIndex", currentIndex);
+    }
+
+    function load() {
+    currentIndex = parseInt(localStorage.getItem("currentIndex"));
+    
+    //让开始游戏按钮同时消失
+
+    const load_displaystartgame = document.getElementById("load");
+    load_displaystartgame.addEventListener("click", function() {
+    document.getElementById("game").style.display = "block"
+    start_game.style.display = "none";
+    showText(currentIndex);
+    });
+    
+    return currentIndex
+    }
+    
+    
+   
+    
+  </script>
+    
+  </body>
+</html>
