@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>你还愿意吗</title>
+  </head>
+  <style>
+/*隐藏*/
+    #inputname {
+      display: none;
+        }
+    #points {
+      display: none;
+      width: 30%;
+      height: 10%;
+      margin: auto;
+      position: fixed;
+      bottom: 50%;
+      left: 40%
+        }  
+    #gameText {
+      display: none;
+    }
+    #save-button {
+      display: none;
+    }
+    #load-button{
+      display: none;
+    }
+    
+/*输入名字*/
+    .name-input{
+      position: fixed;
+      bottom: 50%;
+      left: 50%
+    }
+    .nameinput_lable{
+      position: fixed;
+      bottom: 50%;
+      left: 40%
+    }
+    .nameconfirm_button{
+      position: fixed;
+      bottom: 40%;
+      left: 58%
+    }
+
+/*读取按钮*/
+    .start-game{
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .start-load{
+      position: fixed;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+      
+    .save-button{
+      position: fixed;
+      top: 10%;
+      right: 15%
+    }
+    .load-button{
+      position: fixed;
+      top: 10%;
+      right: 10%
+    }
+
+/*文本*/
+    .game_text{
+      display: flex;
+      font-size: 25px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+  <body>
+<!--容器-->
+    <div id="game"></div>
+    <!--输入名字-->
+    <div id="inputname">
+      <label for="name-input" class="nameinput_lable">请输入你的名字:</label>
+      <input type="text" id="name-input" class="name-input">
+      <button id="name-confirm" class="nameconfirm_button">确定</button>
+    </div>
+    
+    <!--游戏文本-->
+    <div id="gameText"></div>
+    
+    <!--属性点-->
+    <div id="points">
+      <form>
+        <label for="strength">力量：</label>
+        <input type="number" id="strength" name="strength" min="0" max="15" value="0">
+       
+        <label for="agility">敏捷：</label>
+        <input type="number" id="agility" name="agility" min="0" max="15" value="0">
+        
+        <label for="intelligence">智力：</label>
+        <input type="number" id="intelligence" name="intelligence" min="0" max="15" value="0">
+        
+        <button type="submit">提交</button>
+      </form>
+
+      <p>总点数：<span id="totalPoints">0</span></p>
+      <p>剩余点数：<span id="remainingPoints">0</span></p>  
+    </div>
+    
+<!--初始页面按钮-->
+    <button id="start_game" class="start-game">开始旅程</button>
+    <button id="start_load" class="start-load special-button">继续旅程</button>
+    <button id="save-button" class="save-button special-button">保存</button>
+    <button id="load-button" class="load-button special-button">读取</button>
+    
+    
+    <script>
+      //定义容器
+      const gameContainer = document.getElementById("game");
+      const inputNameContainer = document.getElementById("inputname");
+      const nameInput = document.getElementById("name-input");     
+      //定义按钮
+      const nameConfirmButton = document.getElementById("name-confirm");
+      const start_game = document.getElementById("start_game");
+      const startload = document.getElementById("start_load");
+      const saveButton = document.getElementById("save-button");
+      const loadButton = document.getElementById("load-button");
+
+//存档数据
+      let gameState = {
+        playerName: "",
+        text: "",
+        currentTextIndex: 0,
+        strength: 0,
+        agility: 0,
+        intelligence: 0,
+      };
+
+//开始旅程按钮
+    
+      start_game.addEventListener("click", function() {
+       startGame()
+
+       start_game.style.display = "none";
+       startload.style.display = "none";
+      });
+
+      startload.addEventListener('click', function() {
+        loadGameState();       
+        startload.style.display = "none";
+        saveButton.style.display = "block";
+        loadButton.style.display = "block";
+      })
+
+      //输入名字
+      const namecofirmButton = document.getElementById("name-confirm");
+      const pointsElement = document.getElementById("points");
+      nameConfirmButton.addEventListener("click", function () {
+        playerName = nameInput.value;
+        inputNameContainer.style.display = "none";
+        pointsElement.style.display = "block";
+      });
+
+//初始  
+      let currentTextIndex = 0;
+      const gameTextElement = document.getElementById("gameText");
+
+      
+
+      function startGame() {
+//文字储存
+        var gameText = [
+          `你睁开了双眼`,
+          `这是你第一次看到这个世界的景色`,
+          `你的意识一片混沌`,
+          `你听到了无数的声音`,
+          `但是你无法分辨那些是什么`,
+          `随着眼前的光慢慢强烈`,
+          `那些声音泯灭于光芒  就好像从未出现过`,
+        ]
+//渲染文字
+        gameTextElement.style.display = "block";
+        gameState.text = `<span class="game_text"> ${gameText[currentTextIndex]}</span>`;
+        render(); 
+
+        function render() {
+          gameTextElement.innerHTML = gameState.text;
+        }
+
+//翻页功能     
+        document.addEventListener("click", function clickaddindex() {
+          if (event.target.classList.contains("special-button")) {
+            event.stopPropagation();
+            return; 
+          }
+          if (currentTextIndex == gameText.length-1) {
+             inputNameContainer.style.display = "block";
+             gameTextElement.style.display = "none";
+             document.removeEventListener("click", clickaddindex);
+          }
+            
+
+          if (currentTextIndex < gameText.length - 1) {
+            currentTextIndex++;
+            gameState.text = `<span class="game_text">${gameText[currentTextIndex]}</span>`;
+          }
+         
+          render();
+        });
+      }
+      
+      
+
+//保存
+      function updategamestate(){
+        gameState.playerName = playerName;
+        gameState.currentTextIndex = currentTextIndex;
+        gameState.strength = document.querySelector('#strength').value;
+        gameState.agility = document.querySelector('#agility').value;
+        gameState.intelligence = document.querySelector('#intelligence').value;
+      }
+
+
+      saveButton.addEventListener("click", function () {
+        updategamestate();
+        localStorage.setItem("gameState", JSON.stringify(gameState));
+      });
+
+      loadButton.addEventListener('click', loadGameState);
+
+      function loadGameState() {
+        const savedState = localStorage.getItem('gameState');
+        gameState = JSON.parse(savedState);
+        playerName = gameState.playerName;
+        currentTextIndex = gameState.currentTextIndex;
+        document.querySelector('#strength').value = gameState.strength;
+        document.querySelector('#agility').value = gameState.agility;
+        document.querySelector('#intelligence').value = gameState.intelligence;
+        
+        gameTextElement.style.display = 'block';
+        start_game.style.display = 'none';
+        
+        Game1();
+      }
+
+  
+
+//属性设置表单
+    const form = document.querySelector('form');
+		const totalPointsEl = document.querySelector('#totalPoints');
+		const remainingPointsEl = document.querySelector('#remainingPoints');
+		const maxPoints = 15;
+		let totalPoints = maxPoints;
+		let remainingPoints = 0;
+
+		function updatePoints() {
+			const strength = parseInt(document.querySelector('#strength').value);
+			const agility = parseInt(document.querySelector('#agility').value);
+			const intelligence = parseInt(document.querySelector('#intelligence').value);
+			totalPoints = strength + agility + intelligence;
+			remainingPoints = maxPoints - totalPoints;
+			totalPointsEl.textContent = totalPoints;
+			remainingPointsEl.textContent = remainingPoints;
+		}
+
+		form.addEventListener('input', updatePoints);
+		form.addEventListener('submit', function(event) {
+			event.preventDefault();
+			if (remainingPoints < 0) {
+				alert('属性点超出限制！');
+				return;
+			}
+			alert(`力量：${document.querySelector('#strength').value}\n敏捷：${document.querySelector('#agility').value}\n智力：${document.querySelector('#intelligence').value}\n总点数：${totalPoints}`);
+      pointsElement.style.display = "none";
+      saveButton.style.display = "block";
+      loadButton.style.display = "block";
+      Game1()
+    });
+
+
+//第一个场景
+    function Game1() {
+      currentTextIndex = 0
+//文字储存
+      var gameText = [
+        `${playerName}，这是你的名字`,
+        `你逐渐诞生了完整的意识`,
+        `这是一个不怎么美好的世界`,
+        `你生活在一个由几个简易大棚搭成的孤儿院<br>这是一座称不上小镇的人群聚集地<br>似乎每个人的脸上都挂着沉重`,
+        `你记不清自己几岁了<br>这里也没有人会给你记录那种没用的东西<br>你隐隐约约意识到自己活下去可能会是一件很艰难的事情<br>但又谁能知道呢`,
+        ]
+//渲染文字
+      gameTextElement.style.display = "block";
+      gameState.text = `<span class="game_text"> ${gameText[currentTextIndex]}</span>`;
+      render(); 
+
+      function render() {
+        gameTextElement.innerHTML = gameState.text;
+      }
+
+//翻页功能     
+      document.addEventListener("click", function clickaddindex() {
+        if (event.target.classList.contains("special-button")) {
+          event.stopPropagation();
+          return; 
+        }
+            
+        if (currentTextIndex < gameText.length - 1) {
+          currentTextIndex++;
+          gameState.text = `<span class="game_text">${gameText[currentTextIndex]}</span>`;
+        }       
+         
+        render();
+        });
+      }
+    
+  
+    </script>
+  </body>
+</html>
